@@ -15,10 +15,16 @@ class Tube {
   boolean effectSide0 = false;
   boolean effectSide1 = false;
 
-  Tube(int tubeNumber) {
+  int hueValue;
+
+  int brightnessValue = 100;
+
+  Tube(int tubeNumber, int hueValue) {
     this.tubeNumber = tubeNumber; //0 - numTubes
     this.tubeModulus = tubeNumber % 3; // 0, 1, 2
     this.tripodNumber = tubeNumber / 3; //0 - numTubes / 3
+
+    this.hueValue = hueValue;
   }
 
   //Event when tube is touched
@@ -58,6 +64,19 @@ class Tube {
 
   // Executed every frame, for updating continiously things
   void update() {
+
+    pushStyle();
+
+    pushMatrix();
+    translate(this.tubeModulus * (numLEDsPerTube * rectWidth) + (this.tubeModulus * 20 + 20), this.tripodNumber * 21 + 21);
+
+    fill(hueValue, brightnessValue, 100);
+
+    rect(0, 0, tubeLength, rectHeight);
+
+    popStyle();
+
+    popMatrix();
 
     for (int i = 0; i < blocks.size(); i++) {
       Block block = blocks.get(i);
