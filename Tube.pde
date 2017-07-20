@@ -11,6 +11,7 @@ class Tube {
   private int tripodNumber;
 
   ArrayList<Block> blocks = new ArrayList<Block>();
+  ArrayList<TouchPulse> touchpulses = new ArrayList<TouchPulse>();
 
   boolean effectSide0 = false;
   boolean effectSide1 = false;
@@ -31,13 +32,15 @@ class Tube {
 
   void isTouched(int touchLocation) {
     if (touchLocation == 0 && effectSide0 == false) {
-      blocks.add(new Block(tubeModulus, tripodNumber, 0));
+      //blocks.add(new Block(tubeModulus, tripodNumber, 0));
+      touchpulses.add(new TouchPulse(tubeModulus, tripodNumber, 0));
 
       effectSide0 = true;
     }
 
     if (touchLocation == 1 && effectSide1 == false) {
-      blocks.add(new Block(tubeModulus, tripodNumber, 1));
+      //blocks.add(new Block(tubeModulus, tripodNumber, 1));
+      touchpulses.add(new TouchPulse(tubeModulus, tripodNumber, 1));
 
       effectSide1 = true;
     }
@@ -78,10 +81,21 @@ class Tube {
 
     popMatrix();
 
-    for (int i = 0; i < blocks.size(); i++) {
-      Block block = blocks.get(i);
+    //for (int i = 0; i < blocks.size(); i++) {
+    //  Block block = blocks.get(i);
 
-      block.display();
+    //  block.display();
+    //}
+
+    for (int i = 0; i < touchpulses.size(); i++) {
+      TouchPulse touchpulse = touchpulses.get(i);
+
+      touchpulse.display();
     }
+  }
+  
+  void changeHue(){
+    
+    
   }
 }

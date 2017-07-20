@@ -1,4 +1,9 @@
+import de.looksgood.ani.*;
+import de.looksgood.ani.easing.*;
+
 import spout.*;
+
+
 
 //------------------------------ Numbers for setup -----------------------------
 
@@ -26,25 +31,25 @@ Tube[] tubes = new Tube[numTubes];
 Spout spout;
 
 void setup() {
-  size(1600, 880, P2D);
+  size(1600, 880, OPENGL);
   frameRate(90);
   background(0);
   noStroke();
   noSmooth();
 
-  colorMode(HSB, 100, 100, 100);
-  
+  colorMode(HSB, 360, 100, 100);
+
   int counter = 0;
-  
+
   //Initialize tubes with rainbow pattern over installation
 
   for (int i=0; i< numTubes; i++) {
-    if (i % 3 == 0 && i != 0){
-     counter++; 
-     println(counter + " , " + numTubes);
+    if (i % 3 == 0 && i != 0) {
+      counter++; 
+      println(counter + " , " + numTubes);
     }
 
-    int hueValue = int(map(counter, 0, numTripods, 0, 100));
+    int hueValue = int(map(counter, 0, numTripods, 0, 360));
 
     println(hueValue);
 
@@ -69,6 +74,8 @@ void setup() {
   }
 
   spout = new Spout(this);
+
+  Ani.init(this);
 }
 
 void draw() {

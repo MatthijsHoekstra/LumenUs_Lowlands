@@ -69,7 +69,7 @@ void selectingSystem() {
   pushStyle();
   noFill();
 
-  stroke(0, 255, 0);
+  stroke(100, 100, 100);
   rect(x-5, y-5, tubeLength+8, rectHeight+9);
 
   popStyle();

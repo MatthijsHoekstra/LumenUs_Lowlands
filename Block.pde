@@ -1,4 +1,4 @@
-//Standard setup for a class
+  //Standard setup for a class
 
 class Block {
 
@@ -22,7 +22,7 @@ class Block {
     
     pushStyle();
     
-    fill(255);
+    fill(255, 0, 0, 20);
 
     if (this.touchLocation == 0) {
       rect(0, 0, tubeLength/2, rectHeight);
