@@ -3,6 +3,8 @@ class TouchPulse {
   int tubeModulus;
   int tripodNumber;
   int touchLocation;
+  
+  int tubeNumber;
 
   int x = 0;
 
@@ -14,10 +16,12 @@ class TouchPulse {
 
     this.tubeModulus = tubeModulus;
     this.tripodNumber = tripodNumber;
+    
+    tubeNumber = this.tripodNumber * 3 + tubeModulus;
 
     this.touchLocation = touchLocation;
 
-    Ani.to(this, 0.8, "x", tubeLength, Ani.CIRC_OUT, "onEnd:AnimateToBegin");
+    Ani.to(this, 0.8, "x", tubeLength, Ani.CIRC_OUT, "onEnd:animateToBegin");
 
     println("TouchPulse added");
 
@@ -40,20 +44,19 @@ class TouchPulse {
     //if (this.touchLocation == 1) {
     //  rect(tubeLength/2, 0, tubeLength/2, rectHeight);
     //}
-    
-    image(pulse, 0, 0);
+
 
     popStyle();
     popMatrix();
   }
 
   void animateToEnd() {
-    Ani.to(this, 1.5, 0.3, "x", tubeLength, Ani.CIRC_OUT, "onEnd:animateToBegin");
-    
-    tube[tripodNumber*4+tubeModulus].
+    Ani.to(this, 1.2, 0.3, "x", tubeLength, Ani.CIRC_OUT, "onEnd:animateToBegin");
   }
 
-  void AnimateToBegin() {
+  void animateToBegin() {
     Ani.to(this, 2, 0.3, "x", 0, Ani.CIRC_OUT, "onEnd:animateToEnd");
+
+    changeHue(tubeNumber);
   }
 }

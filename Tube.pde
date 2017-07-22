@@ -80,6 +80,12 @@ class Tube {
     popStyle();
 
     popMatrix();
+    
+    if (hueValue > 320){
+      hueValue = 0;
+    } else if (hueValue < 0){
+     hueValue = 360; 
+    }
 
     //for (int i = 0; i < blocks.size(); i++) {
     //  Block block = blocks.get(i);
@@ -95,7 +101,8 @@ class Tube {
   }
   
   void changeHue(){
+    int newHue = hueValue + 40;
     
-    
+    Ani.to(this, 1,  0.3, "hueValue", newHue, Ani.CIRC_IN_OUT);
   }
 }
