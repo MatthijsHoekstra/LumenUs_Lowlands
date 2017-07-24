@@ -11,6 +11,8 @@ class TouchPulse {
   int opacity = 0;
 
   PImage pulse;
+  
+  boolean finished = false;
 
   TouchPulse(int tubeModulus, int tripodNumber, int touchLocation) {
 
@@ -21,11 +23,11 @@ class TouchPulse {
 
     this.touchLocation = touchLocation;
 
-    Ani.to(this, 0.8, "x", tubeLength, Ani.CIRC_OUT, "onEnd:animateToBegin");
+    Ani.to(this, 0.8, "x", tubeLength, Ani.QUAD_OUT, "onEnd:animateToBegin");
 
     println("TouchPulse added");
 
-    Ani.to(this, 0.4, "opacity", 220, Ani.CIRC_OUT);
+    Ani.to(this, 0.4, "opacity", 255, Ani.QUAD_OUT);
   }
 
 
@@ -51,12 +53,20 @@ class TouchPulse {
   }
 
   void animateToEnd() {
-    Ani.to(this, 1.2, 0.3, "x", tubeLength, Ani.CIRC_OUT, "onEnd:animateToBegin");
+    Ani.to(this, 1.2, 0.3, "x", tubeLength, Ani.QUAD_OUT, "onEnd:animateToBegin");
   }
 
   void animateToBegin() {
-    Ani.to(this, 2, 0.3, "x", 0, Ani.CIRC_OUT, "onEnd:animateToEnd");
+    Ani.to(this, 2, 0.3, "x", 0, Ani.QUAD_OUT, "onEnd:animateToEnd");
 
     changeHue(tubeNumber);
+  }
+  
+  void fadeOut(){
+    Ani.to(this, 0.5, "opacity", 0, Ani.QUAD_OUT, "onEnd:finished");
+  }
+  
+  void finished(){
+    finished = true;
   }
 }

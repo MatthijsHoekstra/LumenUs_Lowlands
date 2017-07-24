@@ -2,9 +2,6 @@ import de.looksgood.ani.*;
 import de.looksgood.ani.easing.*;
 
 import spout.*;
-
-
-
 //------------------------------ Numbers for setup -----------------------------
 
 int numModules = 6;
@@ -29,6 +26,8 @@ int selectedTube, tubeNumber;
 Tube[] tubes = new Tube[numTubes];
 
 Spout spout;
+
+ArrayList<PulseOverInstallation> pulsesoverinstallation = new ArrayList<PulseOverInstallation>();
 
 void setup() {
   size(1600, 880, OPENGL);
@@ -81,6 +80,24 @@ void setup() {
 void draw() {
 
   background(0);
+
+  for (int i=0; i<pulsesoverinstallation.size(); i++) {
+    PulseOverInstallation pulseoverinstallation = pulsesoverinstallation.get(i);
+
+    pulseoverinstallation.update();
+
+    for (int j = 0; j < pulseoverinstallation.tubesToTurnOn.length; j++) {
+      if (pulseoverinstallation.tubesToTurnOn[j]) {       
+        tubes[j].setColorOn(0, 0);
+      }
+    }
+
+    for (int j = 0; j < pulseoverinstallation.tubesToTurnOff.length; j++) {
+      if (pulseoverinstallation.tubesToTurnOff[j]) {       
+        tubes[j].setColorOff(0, 0);
+      }
+    }
+  }
 
   for (int i=0; i<numTubes; i++) {
     tubes[i].update();
@@ -155,6 +172,20 @@ void keyPressed() {
 
   if (key == '2') {
     tubes[tubeNumber].isTouched(1);
+  }
+
+  if (key == 'w') {
+    for (int i=0; i<numTubes; i++) {
+      tubes[i].setColorOn(0, 0);
+    }
+  }
+  if (key == 'q') {
+    for (int i=0; i<numTubes; i++) {
+      tubes[i].setColorOff(0, 0);
+    }
+  }
+  if (key == 'e') {
+    pulsesoverinstallation.add(new PulseOverInstallation(0));
   }
 }
 
