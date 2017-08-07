@@ -40,13 +40,13 @@ void drawRaster() {
 void showFrameRate() {
   pushStyle();
   fill(100, 0, 100);
-  text(int(frameRate) + " " + currentSelectedTube + " " + currentSelectedTripod, 5, 16);
+  text(int(frameRate) + " " + currentSelectedTube + " " + currentSelectedTripod + " " + currentSelectedTubeNumber, 5, 16);
   popStyle();
 }
 
 int currentSelectedTube = 0;
 int currentSelectedTripod = 0;
-
+int currentSelectedTubeNumber = 0;
 void selectingSystem() {
   //Keep selecting system within raster
   if (currentSelectedTube < 0) {
@@ -61,6 +61,8 @@ void selectingSystem() {
   if (currentSelectedTripod >= numTripods) {
     currentSelectedTripod = numTripods - 1;
   }
+  
+  currentSelectedTubeNumber = currentSelectedTripod * 3 + currentSelectedTube;
 
   //Create rectangle for indicating which tube / tripod is selected
   pushMatrix();
@@ -74,4 +76,15 @@ void selectingSystem() {
 
   popStyle();
   popMatrix();
+}
+
+int constrainThis(int number, int sort) {
+  if (sort == TRIPODNUMBER) {
+    return int(constrain(number, 0, numTripods - 1));
+  }
+  if (sort == TUBENUMBER) {
+    return int(constrain(number, 0, numTubes - 1));
+  }
+
+  return -1;
 }

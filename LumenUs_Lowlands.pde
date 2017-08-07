@@ -1,7 +1,11 @@
+import mqtt.*;
+
 import de.looksgood.ani.*;
 import de.looksgood.ani.easing.*;
 
 import spout.*;
+
+
 //------------------------------ Numbers for setup -----------------------------
 
 int numModules = 6;
@@ -29,28 +33,40 @@ Spout spout;
 
 ArrayList<PulseOverInstallation> pulsesoverinstallation = new ArrayList<PulseOverInstallation>();
 
+ArrayList<ControllerTouch> controllerstouch = new ArrayList<ControllerTouch>();
+
+//------------------------------ Static values ------------------------------------
+
+static final int LEFT_TO_RIGHT = 0;
+static final int RIGHT_TO_LEFT = 1;
+
+static final int TOUCHED = 0;
+static final int UNTOUCHED = 1;
+
+static final int TUBENUMBER = 0;
+static final int TRIPODNUMBER = 1;
+
+//---------------------------------------------------------------------------------
+
 void setup() {
   size(1600, 880, OPENGL);
-  frameRate(90);
+  frameRate(120);
   background(0);
   noStroke();
   noSmooth();
 
   colorMode(HSB, 360, 100, 100);
 
-  int counter = 0;
-
   //Initialize tubes with rainbow pattern over installation
+
+  int counter = 0;
 
   for (int i=0; i< numTubes; i++) {
     if (i % 3 == 0 && i != 0) {
-      counter++; 
-      println(counter + " , " + numTubes);
+      counter++;
     }
 
-    int hueValue = int(map(counter, 0, numTripods, 0, 360));
-
-    println(hueValue);
+    int hueValue = int(map(counter, 0, numTripods, 0, 320));
 
     tubes[i] = new Tube(i, hueValue);
   }
@@ -81,26 +97,46 @@ void draw() {
 
   background(0);
 
-  for (int i=0; i<pulsesoverinstallation.size(); i++) {
-    PulseOverInstallation pulseoverinstallation = pulsesoverinstallation.get(i);
-
-    pulseoverinstallation.update();
-
-    for (int j = 0; j < pulseoverinstallation.tubesToTurnOn.length; j++) {
-      if (pulseoverinstallation.tubesToTurnOn[j]) {       
-        tubes[j].setColorOn(0, 0);
-      }
-    }
-
-    for (int j = 0; j < pulseoverinstallation.tubesToTurnOff.length; j++) {
-      if (pulseoverinstallation.tubesToTurnOff[j]) {       
-        tubes[j].setColorOff(0, 0);
-      }
-    }
-  }
+  updateInstallationEffects();
 
   for (int i=0; i<numTubes; i++) {
     tubes[i].update();
+  }
+
+  for (int i = 0; i < controllerstouch.size(); i ++) {
+    ControllerTouch controllers = controllerstouch.get(i);
+
+    controllers.updateSize();
+
+    boolean areaTouched = false;
+
+    for (int j = controllers.minTripodNumber; j <= controllers.maxTripodNumber; j++) {
+
+      int tubeNumberStart = j * 3;
+      
+      for (int k = 0; k < 3; k++) {
+
+        //Set the position of the controllers pulse to the tubes pulses itself
+
+        tubes[tubeNumberStart + k].setPulsePosition(controllers.positionPulse);
+
+        //Check if any of the tubes in the area are touched
+
+        if (tubes[tubeNumberStart + k].pulseRunning == true) {
+          areaTouched = true;
+        }
+      }
+    }
+
+    if (areaTouched == false) {
+      for (int j = 0; j < controllers.tripodsIncluded.length; j++) {
+        controllers.tripodsIncluded[j] = false;
+      }
+    }
+
+    if (controllers.finished()) {
+      controllerstouch.remove(i);
+    }
   }
   //pushMatrix();
   //pushStyle();
@@ -119,8 +155,6 @@ void draw() {
 
   //popStyle();
   //popMatrix();
-
-
 
   selectingSystem();
 
@@ -185,7 +219,11 @@ void keyPressed() {
     }
   }
   if (key == 'e') {
-    pulsesoverinstallation.add(new PulseOverInstallation(0));
+    pulsesoverinstallation.add(new PulseOverInstallation(LEFT_TO_RIGHT));
+  }
+
+  if (key == 'f') {
+    pulsesoverinstallation.add(new PulseOverInstallation(RIGHT_TO_LEFT));
   }
 }
 

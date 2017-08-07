@@ -1,3 +1,30 @@
+void updateInstallationEffects() {
+  for (int i=0; i<pulsesoverinstallation.size(); i++) {
+    PulseOverInstallation pulseoverinstallation = pulsesoverinstallation.get(i);
+
+    pulseoverinstallation.update();
+
+    for (int j = 0; j < pulseoverinstallation.tubesToTurnOn.length; j++) {
+      if (pulseoverinstallation.tubesToTurnOn[j] && tubes[j].partOfArea == false) {       
+        tubes[j].setColorOn(0, 0);
+      }
+    }
+
+    for (int j = 0; j < pulseoverinstallation.tubesToTurnOff.length; j++) {
+      if (pulseoverinstallation.tubesToTurnOff[j] && tubes[j].partOfArea == false) {       
+        tubes[j].setColorOff(0, 0);
+      }
+    }
+
+    if (pulseoverinstallation.finished()) {
+      pulsesoverinstallation.remove(i);
+
+      println("Pulse Over Installation Removed");
+    }
+  }
+}
+
+
 class PulseOverInstallation {
 
   int turnOnPositionAnimation = 0;
@@ -14,10 +41,34 @@ class PulseOverInstallation {
 
   boolean firedOn = false;
 
-  PulseOverInstallation(int startLocation) {
-    Ani.to(this, 1.5, "turnOnPositionAnimation", numTripods - 1, Ani.SINE_OUT);
+  boolean tripodsFiredOn[] = new boolean[numTripods];
+  boolean tripodsFiredOff[] = new boolean[numTripods];
 
-    Ani.to(this, 3, 2, "turnOffPositionAnimation", numTripods - 1, Ani.SINE_OUT);
+  int startLocation;
+
+  //---------------------------------Tweakable values
+
+  float durationPulse = 0.75; 
+
+  int delayOff = 500;
+
+  //-------------------------------------------------
+
+  PulseOverInstallation(int startLocation) {
+    this.startLocation = startLocation;
+
+    if (startLocation == 0) {
+      Ani.to(this, 2, "turnOnPositionAnimation", numTripods - 1, Ani.SINE_OUT);
+      Ani.to(this, 2.2, 0.4, "turnOffPositionAnimation", numTripods - 1, Ani.SINE_OUT);
+    }
+
+    if (startLocation == 1) {
+      turnOnPositionAnimation = numTripods - 1;
+      turnOffPositionAnimation = numTripods - 1;
+
+      Ani.to(this, 2, "turnOnPositionAnimation", 0, Ani.SINE_OUT);
+      Ani.to(this, 2.2, 0.4, "turnOffPositionAnimation", 0, Ani.SINE_OUT);
+    }
 
     println("Added PulseOverInstallation");
 
@@ -37,30 +88,34 @@ class PulseOverInstallation {
     int tubeNumberStartOn = turnOnPositionAnimation * 3;
     int tubeNumberStartOff = turnOffPositionAnimation * 3;
 
-    println(tubeNumberStartOn + " , " + tubeNumberStartOff);
+    if (tripodsFiredOn[tubeNumberStartOn / 3] == false) {
+      tubesToTurnOn[tubeNumberStartOn] = true;
+      tubesToTurnOn[tubeNumberStartOn + 1] = true;
+      tubesToTurnOn[tubeNumberStartOn + 2] = true;
 
+      tripodsFiredOn[turnOnPositionAnimation] = true;
 
-    if (firedOn == false) {
-      for (int i = tubeNumberStartOn; i < tubeNumberStartOn + 3; i++) {
-        tubesToTurnOn[i] = true;
-        
-      }
+      //println(tubeNumberStartOn + " , " + tubeNumberStartOff);
     }
 
-    if (tubeNumberStartOn == 69 && firedOn != false) {
-      firedOn = true;
-    }
+    if (tripodsFiredOff[tubeNumberStartOff / 3] == false && millis() >= startTimeTimer + 400) {
+      tubesToTurnOff[tubeNumberStartOff] = true;
+      tubesToTurnOff[tubeNumberStartOff + 1] = true;
+      tubesToTurnOff[tubeNumberStartOff + 2] = true;
 
-    for (int i = tubeNumberStartOff; i < tubeNumberStartOff + 3; i++) {
-      if (millis() > startTimeTimer + 2000) { //This should always be equal to the delay of the second Ani animation    !!IMPORTANT
-        tubesToTurnOff[i] = true;
-      } else {
-        break;
-      }
+      tripodsFiredOff[turnOffPositionAnimation] = true;
+
+      //println(turnOnPositionAnimation + " , " + turnOffPositionAnimation);
     }
   }
 
-  void finished() {
-    finished = true;
+  boolean finished() {
+    if (this.startLocation == 0 && turnOnPositionAnimation * 3 == 69 && turnOffPositionAnimation * 3 == 69) {
+      return true;
+    } else if (this.startLocation == 1 && turnOnPositionAnimation * 3 == 0 && turnOffPositionAnimation * 3 == 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
